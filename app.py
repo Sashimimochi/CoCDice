@@ -184,18 +184,21 @@ class Charactor:
         return abilities, allot_skill_points, allot_hobby_points
 
     def allot_points(self, abilities, allot_points_list, left_points, _type):
+        max_allot_points = left_points
         peaky = self.work_peaky if _type == 'work' else self.hobby_peaky
         selected_abilities = self.select_abilities(int(left_points/self.LIMIT_POINT)+5, _type) if peaky else None
         while left_points > 0:
-            skill, point = self.allot_point(abilities, selected_abilities=selected_abilities)
+            skill, point = self.allot_point(abilities, left_points, selected_abilities=selected_abilities)
             abilities[skill] += point
             allot_points_list[skill] += point
             left_points -= point
+        assert np.sum(list(allot_points_list.values())) == max_allot_points, f'sum allot points {np.sum(list(allot_points_list.values()))} over max allot points {max_allot_points}'
         return abilities, allot_points_list
 
     @retry()
-    def allot_point(self, abilities, selected_abilities=None):
-        point = np.sum(dice(1, self.MAX_POINT))
+    def allot_point(self, abilities, left_points, selected_abilities=None):
+        size = left_points if left_points < self.MAX_POINT else self.MAX_POINT
+        point = size if size == 1 else np.sum(dice(1, size))
         skill = self.select_skill(abilities, point, selected_abilities=selected_abilities)
         return skill, point
 
