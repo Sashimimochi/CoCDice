@@ -184,7 +184,7 @@ class Charactor:
         return abilities, allot_skill_points, allot_hobby_points
 
     def allot_points(self, abilities, allot_points_list, left_points, _type):
-        peaky = self.work_chara_type if _type == 'work' else self.hobby_chara_type
+        peaky = self.work_peaky if _type == 'work' else self.hobby_peaky
         selected_abilities = self.select_abilities(int(left_points/self.LIMIT_POINT)+5, _type) if peaky else None
         while left_points > 0:
             skill, point = self.allot_point(abilities, selected_abilities=selected_abilities)
